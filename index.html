@@ -1,197 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jelly Bean Coverage Tester</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tippy.js@6"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#2563eb',
-            secondary: '#facc15',
-            accent: '#f43f5e',
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realistic Sci-Fi Website</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="./index.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { transition: background 0.3s, color 0.3s; font-family: Arial, sans-serif; }
+        .sky {
+            width: 100vw; height: 100vh; position: relative;
+            background: linear-gradient(to top, #020111, #0d1b2a);
+            transition: background 5s ease-in-out;
         }
-      }
-    }
-  </script>
-</head>
-<body class="bg-gray-50 font-sans">
+        .sun, .moon {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            border-radius: 50%; box-shadow: 0 0 80px rgba(255, 165, 0, 0.9);
+            transition: all 6s ease-in-out;
+        }
+        .sun { bottom: -150px; width: 120px; height: 120px; background: radial-gradient(circle, #ffdd44, #ff7700); }
+        .moon { top: 130%; width: 100px; height: 100px; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/800px-FullMoon2010.jpg'); background-size: cover; opacity: 0; }
+        .theme-box { position: fixed; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.8); padding: 10px; border-radius: 10px; color: white; }
+        .header { position: fixed; top: 0; width: 100%; height: 60px; background: rgba(0, 0, 0, 0.8); color: white; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; z-index: 100; }
 
-  <div class="container mx-auto p-6">
+        /* Star CSS */
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
     <!-- Header -->
-    <header class="text-center mb-8">
-      <h1 class="text-5xl font-bold text-primary">Jelly Bean Coverage Tester</h1>
-      <p class="text-gray-500 mt-2">Analyze, track, and optimize your jelly bean collection.</p>
+    <header class="header">
+        <div class="logo">
+            <i data-lucide="zap" class="w-6 h-6"></i>
+            <span id="logo-text">Jelly</span>
+        </div>
+        <div class="theme-box">
+            <label for="theme-selector">Theme:</label>
+            <select id="theme-selector" onchange="changeTheme(this.value)">
+                <option value="white">White</option>
+                <option value="dark">Dark</option>
+                <option value="blue">Blue</option>
+                <option value="green">Green</option>
+                <option value="purple">Purple</option>
+            </select>
+        </div>
     </header>
 
-    <!-- Features Section -->
-    <section class="mb-8 text-center">
-      <h2 class="text-2xl font-semibold text-gray-800">Why Choose This App?</h2>
-      <div class="flex flex-wrap justify-center gap-4 mt-4">
-        <div class="p-4 bg-white shadow-lg rounded-lg max-w-sm">
-          <h3 class="font-semibold text-lg">Easy to Use</h3>
-          <p class="text-sm text-gray-500">Simple UI to manage jelly beans effortlessly.</p>
+    <!-- Night Sky Animation -->
+    <div class="sky">
+        <div class="sun"></div>
+        <div class="moon"></div>
+    </div>
+
+    <section>
+        <div class="max-w-3xl mx-auto p-6">
+            <!-- Header -->
+            <header class="text-center mb-6">
+              <h1 class="text-4xl font-bold text-primary">Jelly Bean Coverage Tester</h1>
+              <p class="text-gray-500 mt-2">Analyze, track, and optimize your jelly bean collection.</p>
+            </header>
+
+            <!-- Add Jelly Bean Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h2 class="text-lg font-bold text-gray-800 mb-4">Add Jelly Bean</h2>
+              <div class="grid grid-cols-2 gap-4">
+                <input id="flavor" type="text" placeholder="Flavor" class="border p-2 rounded w-full">
+                <input id="color" type="text" placeholder="Color" class="border p-2 rounded w-full">
+              </div>
+              <div class="mt-4 flex gap-4">
+                <button id="addJellyBean" class="bg-blue-500 text-white px-4 py-2 rounded">Add</button>
+                <button id="clearAll" class="bg-red-500 text-white px-4 py-2 rounded">Clear</button>
+              </div>
+            </div>
+
+            <!-- Statistics Table -->
+            <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+              <h2 class="text-lg font-bold text-gray-800 mb-4">Statistics</h2>
+              <table class="w-full border-collapse border border-gray-300">
+                <thead class="bg-gray-200">
+                  <tr>
+                    <th class="border px-4 py-2">Flavor</th>
+                    <th class="border px-4 py-2">Color</th>
+                  </tr>
+                </thead>
+                <tbody id="statisticsTable"></tbody>
+              </table>
+            </div>
+
+            <!-- Pie Chart -->
+            <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+              <h2 class="text-lg font-bold text-gray-800 mb-4">Pie Chart</h2>
+              <canvas id="coverageChart"></canvas>
+            </div>
         </div>
-        <div class="p-4 bg-white shadow-lg rounded-lg max-w-sm">
-          <h3 class="font-semibold text-lg">Real-Time Stats</h3>
-          <p class="text-sm text-gray-500">Monitor flavors, colors & trends instantly.</p>
-        </div>
-        <div class="p-4 bg-white shadow-lg rounded-lg max-w-sm">
-          <h3 class="font-semibold text-lg">Export Data</h3>
-          <p class="text-sm text-gray-500">Save your insights for future analysis.</p>
-        </div>
-      </div>
     </section>
 
-    <!-- Add Jelly Bean Section -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">Add Jelly Bean</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input id="flavor" type="text" placeholder="Flavor" class="input input-bordered w-full">
-        <input id="color" type="text" placeholder="Color" class="input input-bordered w-full">
-      </div>
-      <div class="mt-4 flex gap-4">
-        <button id="addJellyBean" class="btn btn-primary">Add Jelly Bean</button>
-        <button id="clearAll" class="btn btn-error">Clear All</button>
-      </div>
-    </div>
-
-    <!-- Coverage Criteria -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">Coverage Criteria</h2>
-      <button id="applyTest" class="btn btn-success">Apply Test</button>
-      <p id="testResult" class="mt-4 text-gray-700"></p>
-    </div>
-
-    <!-- Statistics -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">Statistics</h2>
-      <table class="table w-full border-collapse border border-gray-300">
-        <thead class="bg-gray-200">
-          <tr>
-            <th class="border px-4 py-2">Flavor</th>
-            <th class="border px-4 py-2">Color</th>
-            <th class="border px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="statisticsTable"></tbody>
-      </table>
-      <button id="exportData" class="btn btn-warning mt-4">Export Data</button>
-    </div>
-
-    <!-- Pie Chart -->
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">Pie Chart of Coverage</h2>
-      <canvas id="coverageChart"></canvas>
-    </div>
-
-    <!-- Buy Now Section -->
-    <div class="mt-12 text-center">
-      <h2 class="text-2xl font-bold text-gray-800">Get Full Access Now!</h2>
-      <p class="text-gray-500 mt-2">Upgrade to unlock premium analytics & features.</p>
-      <button class="btn btn-accent mt-4">Buy Now</button>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="bg-primary text-white p-4 mt-12 text-center">
-    <p>&copy; 2025 Jelly Bean Tester. All rights reserved.</p>
-  </footer>
-
-  <!-- JavaScript -->
-  <script>
-    let jellyBeans = [];
-    const flavorInput = document.getElementById('flavor');
-    const colorInput = document.getElementById('color');
-    const addJellyBeanButton = document.getElementById('addJellyBean');
-    const applyTestButton = document.getElementById('applyTest');
-    const testResult = document.getElementById('testResult');
-    const statisticsTable = document.getElementById('statisticsTable');
-    const coverageChartCanvas = document.getElementById('coverageChart');
-    const clearAllButton = document.getElementById('clearAll');
-    const exportDataButton = document.getElementById('exportData');
-
-    let coverageChart;
-
-    addJellyBeanButton.addEventListener('click', () => {
-      const flavor = flavorInput.value.trim();
-      const color = colorInput.value.trim();
-
-      if (!flavor || !color) {
-        alert('Please enter both flavor and color!');
-        return;
-      }
-
-      jellyBeans.push({ flavor, color });
-      updateStatisticsTable();
-      updatePieChart();
-      flavorInput.value = '';
-      colorInput.value = '';
-    });
-
-    clearAllButton.addEventListener('click', () => {
-      jellyBeans = [];
-      updateStatisticsTable();
-      updatePieChart();
-    });
-
-    applyTestButton.addEventListener('click', () => {
-      const totalJellyBeans = jellyBeans.length;
-      const uniqueColors = [...new Set(jellyBeans.map(jb => jb.color))].length;
-      testResult.textContent = `Total Jelly Beans: ${totalJellyBeans}, Unique Colors: ${uniqueColors}`;
-    });
-
-    function updateStatisticsTable() {
-      statisticsTable.innerHTML = '';
-      jellyBeans.forEach((jb, index) => {
-        const row = `<tr>
-          <td class='border px-4 py-2'>${jb.flavor}</td>
-          <td class='border px-4 py-2'>${jb.color}</td>
-          <td class='border px-4 py-2'>
-            <button onclick='deleteJellyBean(${index})' class='btn btn-xs btn-error'>Delete</button>
-          </td>
-        </tr>`;
-        statisticsTable.innerHTML += row;
-      });
-    }
-
-    function deleteJellyBean(index) {
-      jellyBeans.splice(index, 1);
-      updateStatisticsTable();
-      updatePieChart();
-    }
-
-    function updatePieChart() {
-      const colorCounts = {};
-      jellyBeans.forEach(jb => {
-        colorCounts[jb.color] = (colorCounts[jb.color] || 0) + 1;
-      });
-
-      const colors = Object.keys(colorCounts);
-      const counts = Object.values(colorCounts);
-
-      if (coverageChart) {
-        coverageChart.destroy();
-      }
-
-      coverageChart = new Chart(coverageChartCanvas, {
-        type: 'pie',
-        data: {
-          labels: colors,
-          datasets: [{
-            data: counts,
-            backgroundColor: colors,
-          }]
-        }
-      });
-    }
-  </script>
 </body>
 </html>
