@@ -1,25 +1,56 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const themeSelector = document.getElementById("theme-selector");
     const sky = document.querySelector(".sky");
     const sun = document.querySelector(".sun");
     const moon = document.querySelector(".moon");
+    const flavorInput = document.getElementById("flavor");
+    const colorInput = document.getElementById("color");
+    const addJellyBeanButton = document.getElementById("addJellyBean");
+    const applyTestButton = document.getElementById("applyTest");
+    const testResult = document.getElementById("testResult");
+    const statisticsTable = document.getElementById("statisticsTable");
+    const coverageChartCanvas = document.getElementById("coverageChart");
+    const clearAllButton = document.getElementById("clearAll");
+    
+    let jellyBeans = [];
+    let coverageChart;
 
-    setTimeout(() => {
-        sky.style.background = "linear-gradient(to top, #FFA500, #87CEEB)";
-        sun.style.bottom = "250px";
-    }, 3000);
+    // ✅ Load the saved theme from local storage
+    const savedTheme = localStorage.getItem("selectedTheme");
+    if (savedTheme) {
+        document.body.classList.add(savedTheme + "-theme");
+        if (themeSelector) themeSelector.value = savedTheme;
+    }
 
-    setTimeout(() => {
-        sky.style.background = "black";
-        sun.style.bottom = "-150px";
-        sun.style.opacity = "0";
-        createStars();
-    }, 8000);
+    // ✅ Theme Selection
+    if (themeSelector) {
+        themeSelector.addEventListener("change", function () {
+            document.body.classList.remove("white-theme", "dark-theme", "blue-theme", "green-theme", "purple-theme");
+            document.body.classList.add(this.value + "-theme");
+            localStorage.setItem("selectedTheme", this.value);
+        });
+    }
 
-    setTimeout(() => {
-        moon.style.top = "50px";
-        moon.style.opacity = "1";
-        moveMoon();
-    }, 12000);
+    // ✅ Day-Night Transition
+    if (sky && sun && moon) {
+        setTimeout(() => {
+            sky.style.background = "linear-gradient(to top, #FFA500, #87CEEB)";
+            sun.style.bottom = "250px";
+        }, 3000);
+
+        setTimeout(() => {
+            sky.style.background = "black";
+            sun.style.bottom = "-150px";
+            sun.style.opacity = "0";
+            createStars();
+        }, 8000);
+
+        setTimeout(() => {
+            moon.style.top = "50px";
+            moon.style.opacity = "1";
+            moveMoon();
+        }, 12000);
+    }
 
     function createStars() {
         for (let i = 0; i < 120; i++) {
@@ -52,101 +83,80 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 7000);
     }
 
-    // Jelly Bean Logic
-    let jellyBeans = [];
-    const flavorInput = document.getElementById('flavor');
-    const colorInput = document.getElementById('color');
-    const addJellyBeanButton = document.getElementById('addJellyBean');
-    const applyTestButton = document.getElementById('applyTest');
-    const testResult = document.getElementById('testResult');
-    const statisticsTable = document.getElementById('statisticsTable');
-    const coverageChartCanvas = document.getElementById('coverageChart');
-    const clearAllButton = document.getElementById('clearAll');
-    let coverageChart;
+    // ✅ Jelly Bean Logic
+    if (addJellyBeanButton && applyTestButton && clearAllButton) {
+        addJellyBeanButton.addEventListener("click", () => {
+            const flavor = flavorInput.value.trim();
+            const color = colorInput.value.trim();
+            if (!flavor || !color) {
+                alert("Please enter both flavor and color!");
+                return;
+            }
+            jellyBeans.push({ flavor, color });
+            updateStatisticsTable();
+            updatePieChart();
+            flavorInput.value = "";
+            colorInput.value = "";
+        });
 
-    addJellyBeanButton.addEventListener('click', () => {
-        const flavor = flavorInput.value.trim();
-        const color = colorInput.value.trim();
-        if (!flavor || !color) {
-            alert('Please enter both flavor and color!');
-            return;
-        }
-        jellyBeans.push({ flavor, color });
-        updateStatisticsTable();
-        updatePieChart();
-        flavorInput.value = '';
-        colorInput.value = '';
-    });
+        clearAllButton.addEventListener("click", () => {
+            jellyBeans = [];
+            updateStatisticsTable();
+            updatePieChart();
+        });
 
-    clearAllButton.addEventListener('click', () => {
-        jellyBeans = [];
-        updateStatisticsTable();
-        updatePieChart();
-    });
-
-    applyTestButton.addEventListener('click', () => {
-        const totalJellyBeans = jellyBeans.length;
-        const uniqueColors = [...new Set(jellyBeans.map(jb => jb.color))].length;
-        testResult.textContent = `Total Jelly Beans: ${totalJellyBeans}, Unique Colors: ${uniqueColors}`;
-    });
-
-    function updateStatisticsTable() {
-        statisticsTable.innerHTML = '';
-        jellyBeans.forEach((jb, index) => {
-            const row = `<tr>
-                <td class='border px-4 py-2'>${jb.flavor}</td>
-                <td class='border px-4 py-2'>${jb.color}</td>
-                <td class='border px-4 py-2'>
-                    <button onclick='deleteJellyBean(${index})' class='bg-red-500 text-white px-2 py-1 rounded text-sm'>Delete</button>
-                </td>
-            </tr>`;
-            statisticsTable.innerHTML += row;
+        applyTestButton.addEventListener("click", () => {
+            const totalJellyBeans = jellyBeans.length;
+            const uniqueColors = [...new Set(jellyBeans.map((jb) => jb.color))].length;
+            testResult.textContent = `Total Jelly Beans: ${totalJellyBeans}, Unique Colors: ${uniqueColors}`;
         });
     }
 
-    window.deleteJellyBean = function(index) {
+    function updateStatisticsTable() {
+        let rows = jellyBeans
+            .map(
+                (jb, index) =>
+                    `<tr>
+                        <td>${jb.flavor}</td>
+                        <td>${jb.color}</td>
+                        <td><button onclick="deleteJellyBean(${index})">Delete</button></td>
+                    </tr>`
+            )
+            .join("");
+        statisticsTable.innerHTML = rows;
+    }
+
+    window.deleteJellyBean = function (index) {
         jellyBeans.splice(index, 1);
         updateStatisticsTable();
         updatePieChart();
     };
 
     function updatePieChart() {
+        if (!coverageChartCanvas || typeof Chart === "undefined") return;
+
         const colorCounts = {};
-        jellyBeans.forEach(jb => {
+        jellyBeans.forEach((jb) => {
             colorCounts[jb.color] = (colorCounts[jb.color] || 0) + 1;
         });
         const colors = Object.keys(colorCounts);
         const counts = Object.values(colorCounts);
+
         if (coverageChart) {
             coverageChart.destroy();
         }
+
         coverageChart = new Chart(coverageChartCanvas, {
-            type: 'pie',
+            type: "pie",
             data: {
                 labels: colors,
-                datasets: [{
-                    data: counts,
-                    backgroundColor: colors,
-                }]
+                datasets: [
+                    {
+                        data: counts,
+                        backgroundColor: colors
+                    }
+                ]
             }
         });
     }
-
-    // Theme Selector Initialization
-    const themeSelector = document.getElementById('theme-selector');
-    const savedTheme = localStorage.getItem('selectedTheme') || 'white';
-    themeSelector.value = savedTheme;
-    changeTheme(savedTheme);
 });
-
-function changeTheme(theme) {
-    const themes = {
-        white: "bg-white text-gray-900",
-        dark: "bg-gray-900 text-white",
-        blue: "bg-blue-500 text-white",
-        green: "bg-green-500 text-white",
-        purple: "bg-purple-500 text-white"
-    };
-    document.body.className = themes[theme] || themes.white;
-    localStorage.setItem('selectedTheme', theme);
-}

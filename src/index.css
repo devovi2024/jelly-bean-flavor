@@ -1,0 +1,36 @@
+
+
+.white-theme { background: white; color: black; }
+.dark-theme { background: black; color: white; }
+.blue-theme { background: #001f3f; color: white; }
+.green-theme { background: #004d00; color: white; }
+.purple-theme { background: #2d004d; color: white; }
+
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { transition: background 0.3s, color 0.3s; font-family: 'Inter', sans-serif; }
+    .sky {
+        width: 100vw; height: 100vh; position: relative;
+        background: linear-gradient(to top, #020111, #0d1b2a);
+        transition: background 5s ease-in-out;
+    }
+    .sun, .moon {
+        position: absolute; left: 50%; transform: translateX(-50%);
+        border-radius: 50%; box-shadow: 0 0 80px rgba(255, 165, 0, 0.9);
+        transition: all 6s ease-in-out;
+    }
+    .sun { bottom: -100px; width: 150px; height: 150px; background: radial-gradient(circle, #ffdd44, #ff7700); }
+    .moon { top: 130%; width: 120px; height: 120px; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/800px-FullMoon2010.jpg'); background-size: cover; opacity: 0; }
+    .header {
+        position: fixed; top: 0; width: 100%; height: 70px;
+        background: rgba(0, 0, 0, 0.85); color: white;
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 15px 25px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        z-index: 100;
+    }
+    .star {
+        position: absolute; width: 3px; height: 3px;
+        background: white; opacity: 0;
+        transition: opacity 1s ease-in-out;
+    }

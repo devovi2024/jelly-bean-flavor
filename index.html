@@ -4,56 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Realistic Sci-Fi Website</title>
+    <link rel="stylesheet" href="src/index.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script defer src="./index.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { transition: background 0.3s, color 0.3s; font-family: Arial, sans-serif; }
-        .sky {
-            width: 100vw; height: 100vh; position: relative;
-            background: linear-gradient(to top, #020111, #0d1b2a);
-            transition: background 5s ease-in-out;
-        }
-        .sun, .moon {
-            position: absolute; left: 50%; transform: translateX(-50%);
-            border-radius: 50%; box-shadow: 0 0 80px rgba(255, 165, 0, 0.9);
-            transition: all 6s ease-in-out;
-        }
-        .sun { bottom: -150px; width: 120px; height: 120px; background: radial-gradient(circle, #ffdd44, #ff7700); }
-        .moon { top: 130%; width: 100px; height: 100px; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/800px-FullMoon2010.jpg'); background-size: cover; opacity: 0; }
-        .theme-box { position: fixed; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.8); padding: 10px; border-radius: 10px; color: white; }
-        .header { position: fixed; top: 0; width: 100%; height: 60px; background: rgba(0, 0, 0, 0.8); color: white; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; z-index: 100; }
 
-        /* Star CSS */
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0;
-            animation: twinkle 2s infinite ease-in-out;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 1; }
-        }
-    </style>
 </head>
 <body class="bg-black text-white">
-
-    <!-- Header -->
     <header class="header">
-        <div class="logo">
+        <div class="flex items-center gap-2">
             <i data-lucide="zap" class="w-6 h-6"></i>
-            <span id="logo-text">Jelly</span>
+            <span class="text-xl font-semibold">JellyBean</span>
         </div>
-        <div class="theme-box">
-            <label for="theme-selector">Theme:</label>
-            <select id="theme-selector" onchange="changeTheme(this.value)">
+        <div class="bg-gray-900 px-4 py-2 rounded-lg">
+            <label for="theme-selector" class="mr-2">Theme:</label>
+            <select id="theme-selector" class="bg-gray-800 text-white p-1 rounded">
                 <option value="white">White</option>
                 <option value="dark">Dark</option>
                 <option value="blue">Blue</option>
@@ -63,54 +28,72 @@
         </div>
     </header>
 
-    <!-- Night Sky Animation -->
-    <div class="sky">
+    <div class="sky relative overflow-hidden flex items-center justify-center">
         <div class="sun"></div>
         <div class="moon"></div>
     </div>
 
-    <section>
-        <div class="max-w-3xl mx-auto p-6">
-            <!-- Header -->
-            <header class="text-center mb-6">
-              <h1 class="text-4xl font-bold text-primary">Jelly Bean Coverage Tester</h1>
-              <p class="text-gray-500 mt-2">Analyze, track, and optimize your jelly bean collection.</p>
-            </header>
+    <main>
+      
+    <section class="max-w-3xl mx-auto p-8 mt-12">
+      <header class="text-center mb-6">
+          <h1 class="text-5xl font-bold text-blue-400">Jelly Bean Coverage Tester</h1>
+          <p class="text-gray-400 mt-2">Analyze, track, and optimize your jelly bean collection.</p>
+      </header>
 
-            <!-- Add Jelly Bean Section -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-              <h2 class="text-lg font-bold text-gray-800 mb-4">Add Jelly Bean</h2>
-              <div class="grid grid-cols-2 gap-4">
-                <input id="flavor" type="text" placeholder="Flavor" class="border p-2 rounded w-full">
-                <input id="color" type="text" placeholder="Color" class="border p-2 rounded w-full">
-              </div>
-              <div class="mt-4 flex gap-4">
-                <button id="addJellyBean" class="bg-blue-500 text-white px-4 py-2 rounded">Add</button>
-                <button id="clearAll" class="bg-red-500 text-white px-4 py-2 rounded">Clear</button>
-              </div>
-            </div>
+      <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-bold text-white mb-4">Add Jelly Bean</h2>
+          <div class="grid grid-cols-2 gap-4">
+              <input id="flavor" type="text" placeholder="Flavor" class="border p-3 rounded w-full bg-gray-700 text-white">
+              <input id="color" type="text" placeholder="Color" class="border p-3 rounded w-full bg-gray-700 text-white">
+          </div>
+          <div class="mt-4 flex gap-4">
+              <button id="addJellyBean" class="bg-blue-500 text-white px-6 py-3 rounded font-semibold">Add</button>
+              <button id="clearAll" class="bg-red-500 text-white px-6 py-3 rounded font-semibold">Clear</button>
+          </div>
+      </div>
 
-            <!-- Statistics Table -->
-            <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-              <h2 class="text-lg font-bold text-gray-800 mb-4">Statistics</h2>
-              <table class="w-full border-collapse border border-gray-300">
-                <thead class="bg-gray-200">
+      <div class="mt-4">
+        <button id="applyTest" class="bg-green-500 text-white px-6 py-3 rounded font-semibold">Apply Test</button>
+        <p id="testResult" class="mt-2 text-white font-bold"></p>
+    </div>
+
+      <div class="bg-gray-800 p-6 rounded-lg shadow-md mt-6">
+          <h2 class="text-xl font-bold text-white mb-4">Statistics</h2>
+          <table class="w-full border-collapse border border-gray-600 text-white">
+              <thead class="bg-gray-700">
                   <tr>
-                    <th class="border px-4 py-2">Flavor</th>
-                    <th class="border px-4 py-2">Color</th>
+                      <th class="border px-4 py-3">Flavor</th>
+                      <th class="border px-4 py-3">Color</th>
                   </tr>
-                </thead>
-                <tbody id="statisticsTable"></tbody>
-              </table>
-            </div>
+              </thead>
+              <tbody id="statisticsTable"></tbody>
+          </table>
+      </div>
 
-            <!-- Pie Chart -->
-            <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-              <h2 class="text-lg font-bold text-gray-800 mb-4">Pie Chart</h2>
-              <canvas id="coverageChart"></canvas>
-            </div>
+      <div class="bg-gray-800 p-6 rounded-lg shadow-md mt-6">
+          <h2 class="text-xl font-bold text-white mb-4">Pie Chart</h2>
+          <canvas id="coverageChart"></canvas>
+      </div>
+  </section>
+
+    </main>
+
+    <footer class="relative bg-gray-900 text-white py-10 mt-16 shadow-lg shadow-blue-500/50 border-t border-gray-700">
+      <div class="container mx-auto px-6 text-center space-y-6">
+        <h2 class="text-3xl font-bold text-blue-400 drop-shadow-md">Stay Connected</h2>
+        <p class="text-gray-400">Follow us for the latest updates insights.</p>
+        <div class="flex justify-center space-x-6">
+          <a href="#" class="hover:text-blue-400 transition-transform transform hover:scale-110">Facebook</a>
+          <a href="#" class="hover:text-blue-400 transition-transform transform hover:scale-110">Twitter</a>
+          <a href="#" class="hover:text-blue-400 transition-transform transform hover:scale-110">Instagram</a>
+          <a href="#" class="hover:text-blue-400 transition-transform transform hover:scale-110">LinkedIn</a>
         </div>
-    </section>
-
+      </div>
+      <div class="absolute inset-0 bg-gradient-to-t from-blue-500/30 to-transparent blur-3xl opacity-50"></div>
+      <div class="text-center mt-6 text-gray-500 text-sm">&copy; 2025 Jelly Bean Coverage. All rights reserved.</div>
+    </footer>
+    
+    <script src="./index.js"></script>
 </body>
 </html>
